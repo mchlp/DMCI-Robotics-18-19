@@ -30,7 +30,43 @@
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
 void operatorControl() {
+
+	/*
+	Programming Notes:
+	INVERT ON CODE, NOT THE ROBOT!
+	*/
+
+	unsigned long prevWakeupTime = millis();
+
+	int move, rotate, baseUp, baseDown, liftUp, liftDown;
+	int leftWheel, rightWheel, base, lift;
+
 	while (1) {
+
+		// Controller Input
+		rotate = joystickGetAnalog(JOYSTICK_PRIMARY, JOY_RX);
+		move = joystickGetAnalog(JOYSTICK_PRIMARY, JOY_LY);
+		baseDown = joystickGetDigital(JOYSTICK_PRIMARY, JOY_LBUM, JOY_UP);
+		baseUp = joystickGetDigital(JOYSTICK_PRIMARY, JOY_LBUM, JOY_DOWN);
+		liftUp = joystickGetDigital(JOYSTICK_PRIMARY, JOY_RBUM, JOY_UP);
+		liftDown = joystickGetDigital(JOYSTICK_PRIMARY, JOY_RBUM, JOY_DOWN);
+
+		// Calculate Movement
+		leftWheel = move + rotate;
+		rightWheel = -(move - rotate);
+		base = baseDown ? SPD_BASE_DOWN : baseUp ? SPD_BASE_UP : 0;
+		lift = liftUp ? SPD_LIFT : liftDown ? -SPD_LIFT : 0;
+
+		// Motor Output
+		motorSet(MC_WHEEL_L, leftWheel);
+		motorSet(MC_WHEEL_R, rightWheel);
+		motorSet(MC_BASE_L, base);
+		motorSet(MC_BASE_R, -base);
+		motorSet(MC_LIFT_L_1, lift);
+		motorSet(MC_LIFT_L_2, lift);
+		motorSet(MC_LIFT_R_1, -lift);
+		motorSet(MC_LIFT_R_2, -lift);
+
 		delay(20);
 	}
 }

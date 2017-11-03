@@ -27,6 +27,9 @@
 #include <stdarg.h>
 #include <stdint.h>
 
+// Custom "constants.h" Header
+#include "constants.h"
+
 // Begin C++ extern to C
 #ifdef __cplusplus
 extern "C" {
