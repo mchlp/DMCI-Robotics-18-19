@@ -20,14 +20,13 @@
 #define CONSTANTS_H_
 
 // Set Teamname string
-#define TEAMNAME "Team2505"
+#define TEAMNAME "2505"
 
 // Robot Constants
-#define SPD_BASE_UP 255
-#define SPD_BASE_DOWN -128
-#define SPD_LIFT -255
-#define SPD_CLAW 192
-
+#define SPD_BASE_UP 127
+#define SPD_BASE_DOWN -64
+#define SPD_LIFT -127
+#define SPD_CLAW 127
 
 // Joystick Constants
 #define JOYSTICK_PRIMARY 1

@@ -38,8 +38,8 @@ void operatorControl() {
 
 	unsigned long prevWakeupTime = millis();
 
-	int move, rotate, baseUp, baseDown, liftUp, liftDown;
-	int leftWheel, rightWheel, base, lift;
+	int move, rotate, baseUp, baseDown, liftUp, liftDown, clawGrab, clawRelease;
+	int leftWheel, rightWheel, base, lift, claw;
 
 	while (1) {
 
@@ -50,12 +50,15 @@ void operatorControl() {
 		baseUp = joystickGetDigital(JOYSTICK_PRIMARY, JOY_LBUM, JOY_DOWN);
 		liftUp = joystickGetDigital(JOYSTICK_PRIMARY, JOY_RBUM, JOY_UP);
 		liftDown = joystickGetDigital(JOYSTICK_PRIMARY, JOY_RBUM, JOY_DOWN);
+		clawGrab = joystickGetDigital(JOYSTICK_PRIMARY, JOY_RPAD, JOY_LEFT);
+		clawRelease = joystickGetDigital(JOYSTICK_PRIMARY, JOY_RPAD, JOY_RIGHT);
 
 		// Calculate Movement
 		leftWheel = move + rotate;
 		rightWheel = -(move - rotate);
 		base = baseDown ? SPD_BASE_DOWN : baseUp ? SPD_BASE_UP : 0;
 		lift = liftUp ? SPD_LIFT : liftDown ? -SPD_LIFT : 0;
+		claw = clawGrab ? SPD_CLAW : clawRelease ? -SPD_CLAW : 0;
 
 		// Motor Output
 		motorSet(MC_WHEEL_L, leftWheel);
@@ -66,7 +69,9 @@ void operatorControl() {
 		motorSet(MC_LIFT_L_2, lift);
 		motorSet(MC_LIFT_R_1, -lift);
 		motorSet(MC_LIFT_R_2, -lift);
+		motorSet(MC_CLAW_1, claw);
+		motorSet(MC_CLAW_2, claw);
 
-		delay(20);
+		taskDelayUntil(&prevWakeupTime, 20);
 	}
 }
