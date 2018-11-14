@@ -23,13 +23,30 @@ struct MotorDrive {
     struct Motor mbr;
 };
 
+struct JoystickInputAnalog {
+    unsigned char axis;
+    bool enabled;
+    double value;
+};
+
 struct Joystick {
     unsigned char number;
-    bool enabled[4];
-    double values[4];
+    struct JoystickInputAnalog lx;
+    struct JoystickInputAnalog ly;
+    struct JoystickInputAnalog rx;
+    struct JoystickInputAnalog ry;
 };
 
 static inline double clamp(double val, double min, double max) { return val < min ? min : (val > max ? max : val); }
+
+static inline void write_motor_all(struct MotorDrive *motorDrive, double forward, double right) {
+    write_motor(&motorDrive->mfl, forward+right);
+    write_motor(&motorDrive->mfr, forward-right);
+    write_motor(&motorDrive->mml, forward+right);
+    write_motor(&motorDrive->mmr, forward-right);
+    write_motor(&motorDrive->mbl, forward+right);
+    write_motor(&motorDrive->mbr, forward-right);
+}
 
 static inline void write_motor(struct Motor *motor, double value) {
     if (motor->channel == 0) {
@@ -39,16 +56,17 @@ static inline void write_motor(struct Motor *motor, double value) {
     motorSet(motor->channel, clamp(output * MAX_ABS_MOTOR, -MAX_ABS_MOTOR, MAX_ABS_MOTOR));
 }
 
-static inline int get_joystick_all(struct Joystick *joystick) {
-    for (int i = 0; i < 4; i++) {
-        if (joystick->enabled[i]) {
-            joystick->values[i] = get_joystick_analog(joystick->number, i);
-        }
-    }
+static inline void get_joystick_all(struct Joystick *joystick) {
+    get_joystick_analog(&joystick->lx, joystick->number);
+    get_joystick_analog(&joystick->ly, joystick->number);
+    get_joystick_analog(&joystick->rx, joystick->number);
+    get_joystick_analog(&joystick->ly, joystick->number);
 }
 
-static inline int get_joystick_analog(unsigned char joystick, unsigned char axis) {
-    return joystickGetAnalog(joystick, axis) / MAX_ABS_JOYSTICK_ANALOG;
+static inline int get_joystick_analog(struct JoystickInputAnalog *inputAnalog, unsigned char joystick) {
+    if (inputAnalog->enabled) {
+        inputAnalog->value = joystickGetAnalog(inputAnalog->axis, joystick) / MAX_ABS_JOYSTICK_ANALOG;
+    }
 }
 
 #endif

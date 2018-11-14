@@ -26,9 +26,24 @@
  *
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
+
+unsigned char channel;
+double off;
+double min;
+double max;
+double mul;
+
+static struct MotorDrive motorDrive = {{1, 0, 0, 1, 1}, {2, 0, 0, 1, 1}, {3, 0, 0, 1, 1}, {4, 0, 0, 1, 1}, {5, 0, 0, 1, 1}, {6, 0, 0, 1, 1}};
+
+static struct Joystick joystick = {1, {true, 4, 0}, {true, 3, 0}, {true, 1, 0}, {true, 2, 0}};
+
 void operatorControl() {
-	while (1) {
-		printf("Hello PROS User!\n");
-		delay(20);
-	}
+
+	unsigned long prevWakeupTime = millis();
+
+    while (1) {
+        get_joystick_all(&joystick);
+		write_motor_all(&motorDrive, joystick.ry.value, joystick.rx.value);
+		taskDelayUntil(&prevWakeupTime, 20);
+    }
 }
