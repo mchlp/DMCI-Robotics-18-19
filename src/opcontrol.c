@@ -33,17 +33,21 @@ double min;
 double max;
 double mul;
 
-static struct MotorDrive motorDrive = {{1, 0, 0, 1, 1}, {2, 0, 0, 1, 1}, {3, 0, 0, 1, 1}, {4, 0, 0, 1, 1}, {5, 0, 0, 1, 1}, {6, 0, 0, 1, 1}};
+static struct MotorDrive motorDrive = {{5, 0, -1, 1, 1}, {2, 0, -1, 1, -1}, {4, 0, -1, 1, 1}, {3, 0, -1, 1, -1}};
 
-static struct Joystick joystick = {1, {true, 4, 0}, {true, 3, 0}, {true, 1, 0}, {true, 2, 0}};
+static struct MotorRack motorRack = {{9, 0, 0, 1, 1}, {8, 0, 0, 1, -1}};
+
+static struct MotorArm motorArm = {{7, 0, 0, 1, 1}, {6, 0, 0, 1, -1}};
+
+static struct Joystick joystick = {1, {4, 0}, {3, 0}, {1, 0}, {2, 0}};
 
 void operatorControl() {
-
-	unsigned long prevWakeupTime = millis();
+    unsigned long prevWakeupTime = millis();
 
     while (1) {
         get_joystick_all(&joystick);
-		write_motor_all(&motorDrive, joystick.ry.value, joystick.rx.value);
-		taskDelayUntil(&prevWakeupTime, 20);
+        printf("%f %f %f %f \n", joystick.lx.value, joystick.ly.value, joystick.rx.value, joystick.ry.value);
+		write_motor_drive(&motorDrive, joystick.ry.value, joystick.rx.value);
+        taskDelayUntil(&prevWakeupTime, 20);
     }
 }
