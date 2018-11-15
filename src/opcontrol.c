@@ -34,20 +34,33 @@ double max;
 double mul;
 
 static struct MotorDrive motorDrive = {{5, 0, -1, 1, 1}, {2, 0, -1, 1, -1}, {4, 0, -1, 1, 1}, {3, 0, -1, 1, -1}};
-
-static struct MotorRack motorRack = {{9, 0, 0, 1, 1}, {8, 0, 0, 1, -1}};
-
-static struct MotorArm motorArm = {{7, 0, 0, 1, 1}, {6, 0, 0, 1, -1}};
-
-static struct Joystick joystick = {1, {4, 0}, {3, 0}, {1, 0}, {2, 0}};
+static struct MotorRack motorRack = {{6, 0, -1, 1, 1}, {7, 0, -1, 1, 1}};
+static struct MotorArm motorArm = {{8, 0, -1, 1, 1}, {9, 0, -1, 1, -1}};
+static struct Joystick joystick = {1, {4, 0}, {3, 0}, {1, 0}, {2, 0}, {7, 0, 0}, {8, 0, 0}, {5, 0, 0}, {6, 0, 0}};
+static struct Pneumatics pneuGrip = {1, false};
+static struct Pneumatics pneuLift = {2, false};
 
 void operatorControl() {
     unsigned long prevWakeupTime = millis();
 
+    pinMode(pneuGrip.pin, OUTPUT);
+
     while (1) {
         get_joystick_all(&joystick);
-        printf("%f %f %f %f \n", joystick.lx.value, joystick.ly.value, joystick.rx.value, joystick.ry.value);
-		write_motor_drive(&motorDrive, joystick.ry.value, joystick.rx.value);
+        // printf("%f %f %f %f\n", joystick.lx.value, joystick.ly.value, joystick.rx.value, joystick.ry.value);
+        // printf("%d %d %d %d\n", joystickGetAnalog(1, 1),  joystickGetAnalog(1, 2),  joystickGetAnalog(1, 3),
+        // joystickGetAnalog(1, 4));
+        //printf("%f %f %f %f %f %f %f %f %f %f\n", joystick.lx.value, joystick.ly.value, joystick.rx.value, joystick.ry.value,
+        //       joystick.ld4.valueX, joystick.ld4.valueY, joystick.rd4.valueX, joystick.rd4.valueY, joystick.ld2.valueY,
+        //       joystick.rd2.valueY);
+        write_motor_drive(&motorDrive, joystick.ry.value, joystick.rx.value);
+        write_motor_rack(&motorRack, joystick.rd2.valueY);
+        write_motor_arm(&motorArm, joystick.ld2.valueY);
+        set_pneumatics(&pneuGrip, joystick.ld4.valueX);
+        set_pneumatics(&pneuLift, joystick.ld4.valueY);
+        write_pneumatics(&pneuGrip);
+        write_pneumatics(&pneuLift);
+        printf("%d\n", pneuGrip.opened);
         taskDelayUntil(&prevWakeupTime, 20);
     }
 }

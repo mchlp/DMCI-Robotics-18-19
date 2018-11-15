@@ -14,6 +14,11 @@ struct Motor {
     double mul;
 };
 
+struct Pneumatics {
+    unsigned char pin;
+    bool opened;
+};
+
 struct MotorDrive {
     struct Motor mfl;
     struct Motor mfr;
@@ -36,12 +41,22 @@ struct JoystickInputAnalog {
     double value;
 };
 
+struct JoystickInputDigital {
+    unsigned char group;
+    double valueX;
+    double valueY;
+};
+
 struct Joystick {
     unsigned char number;
     struct JoystickInputAnalog lx;
     struct JoystickInputAnalog ly;
     struct JoystickInputAnalog rx;
     struct JoystickInputAnalog ry;
+    struct JoystickInputDigital ld4;
+    struct JoystickInputDigital rd4;
+    struct JoystickInputDigital ld2;
+    struct JoystickInputDigital rd2;
 };
 
 static inline double clamp(double val, double min, double max) { return val < min ? min : (val > max ? max : val); }
@@ -71,15 +86,45 @@ static inline void write_motor_arm(struct MotorArm *motorArm, double value) {
     write_motor(&motorArm->mr, value);
 }
 
+static inline void write_pneumatics(struct Pneumatics *pneumatics) {
+    if (pneumatics->opened) {
+        digitalWrite(pneumatics->pin, HIGH);
+    } else {
+        digitalWrite(pneumatics->pin, LOW);
+    }
+}
+
+static inline void set_pneumatics(struct Pneumatics *pneumatics, double value) {
+    if (value > 0) {
+        pneumatics->opened = true;
+    } else if (value < 0) {
+        pneumatics->opened = false;
+    }
+}
+
 static inline int get_joystick_analog(struct JoystickInputAnalog *inputAnalog, unsigned char joystick) {
     inputAnalog->value = joystickGetAnalog(joystick, inputAnalog->axis) / MAX_ABS_JOYSTICK_ANALOG;
 }
 
+static inline int get_joystick_digital(struct JoystickInputDigital *inputDigital, unsigned char joystick) {
+    int left = joystickGetDigital(joystick, inputDigital->group, JOY_LEFT) ? -1 : 0;
+    int right = joystickGetDigital(joystick, inputDigital->group, JOY_RIGHT) ? 1 : 0;
+    inputDigital->valueX = left + right;
+
+    int up = joystickGetDigital(joystick, inputDigital->group, JOY_DOWN) ? -1 : 0;
+    int down = joystickGetDigital(joystick, inputDigital->group, JOY_UP) ? 1 : 0;
+    inputDigital->valueY = up + down;
+}
+
 static inline void get_joystick_all(struct Joystick *joystick) {
-    get_joystick_analog(&joystick->lx, joystick->number);
-    get_joystick_analog(&joystick->ly, joystick->number);
-    get_joystick_analog(&joystick->rx, joystick->number);
-    get_joystick_analog(&joystick->ry, joystick->number);
+    get_joystick_analog(&(joystick->lx), joystick->number);
+    get_joystick_analog(&(joystick->ly), joystick->number);
+    get_joystick_analog(&(joystick->rx), joystick->number);
+    get_joystick_analog(&(joystick->ry), joystick->number);
+    get_joystick_digital(&joystick->ld4, joystick->number);
+    get_joystick_digital(&joystick->rd4, joystick->number);
+    get_joystick_digital(&joystick->ld2, joystick->number);
+    get_joystick_digital(&joystick->rd2, joystick->number);
 }
 
 #endif
