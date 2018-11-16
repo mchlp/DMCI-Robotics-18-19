@@ -44,6 +44,7 @@ void operatorControl() {
     unsigned long prevWakeupTime = millis();
 
     pinMode(pneuGrip.pin, OUTPUT);
+    pinMode(pneuLift.pin, OUTPUT);
 
     while (1) {
         get_joystick_all(&joystick);
@@ -60,7 +61,7 @@ void operatorControl() {
         set_pneumatics(&pneuLift, joystick.ld4.valueY);
         write_pneumatics(&pneuGrip);
         write_pneumatics(&pneuLift);
-        printf("%d\n", pneuGrip.opened);
+        printf("%d\n", pneuLift.opened);
         taskDelayUntil(&prevWakeupTime, 20);
     }
 }
