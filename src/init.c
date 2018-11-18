@@ -18,6 +18,8 @@
  * configure a UART port (usartOpen()) but cannot set up an LCD (lcdInit()).
  */
 void initializeIO() {
+    pinMode(pneuGrip.pin, OUTPUT);
+    pinMode(pneuLift.pin, OUTPUT);
 }
 
 /*
@@ -33,5 +35,14 @@ void initializeIO() {
  * will not start. An autonomous mode selection menu like the pre_auton() in other environments
  * can be implemented in this task if desired.
  */
-void initialize() {
-}
+void initialize() {}
+
+/**
+ * Initialize variables from 'util.h'
+ **/
+struct MotorDrive motorDrive = {{5, 0, -1, 1, 1}, {2, 0, -1, 1, -1}, {4, 0, -1, 1, 1}, {3, 0, -1, 1, -1}};
+struct MotorRack motorRack = {{6, 0, -1, 1, 1}, {7, 0, -1, 1, 1}};
+struct MotorArm motorArm = {{8, 0, -1, 1, 1}, {9, 0, -1, 1, -1}};
+struct Joystick joystick = {1, {4, 0}, {3, 0}, {1, 0}, {2, 0}, {7, 0, 0}, {8, 0, 0}, {5, 0, 0}, {6, 0, 0}};
+struct Pneumatics pneuGrip = {1, false};
+struct Pneumatics pneuLift = {2, false};

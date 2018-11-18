@@ -14,6 +14,23 @@ struct Motor {
     double mul;
 };
 
+struct PID {
+    double setMin;
+    double setMax;
+    double pGain;
+    double iGain;
+    double dGain;
+    double errSum;
+    double errLast;
+    double setPoint;
+};
+
+struct MotorControlWithPoten {
+    unsigned char potenChannel;
+    struct Motor motor;
+    struct PID pid;
+};
+
 struct Pneumatics {
     unsigned char pin;
     bool opened;
@@ -61,12 +78,35 @@ struct Joystick {
 
 static inline double clamp(double val, double min, double max) { return val < min ? min : (val > max ? max : val); }
 
+static inline void set_pid(struct PID *pid, double value) { pid->setPoint = value; }
+
+static inline double get_new_value_pid(struct PID *pid, double curValue) {
+    double error = pid->setPoint - curValue;
+    pid->errSum += error;
+    double errDelta = error - pid->errLast;
+    pid->errLast = error;
+    double correction = (error * pid->pGain + pid->errSum * pid->iGain + errDelta * pid->dGain);
+    printf("%f\n", correction);
+    return correction;
+}
+
+static inline void update_pid(struct PID *pid, double value) {}
+
 static inline void write_motor(struct Motor *motor, double value) {
     if (motor->channel == 0) {
         return;
     }
     double output = clamp(motor->mul * value + motor->off, motor->min, motor->max);
     motorSet(motor->channel, clamp(output * MAX_ABS_MOTOR, -MAX_ABS_MOTOR, MAX_ABS_MOTOR));
+}
+
+static inline void set_motor_control_with_poten(struct MotorControlWithPoten *motorControlWithPoten, double change) {
+    set_pid(&motorControlWithPoten->pid, clamp(motorControlWithPoten->pid.setPoint + change, motorControlWithPoten->pid.setMin,
+                                               motorControlWithPoten->pid.setMax));
+}
+
+static inline void refresh_motor_control_with_poten(struct MotorControlWithPoten *motorControlWithPoten) {
+    write_motor(&motorControlWithPoten->motor, get_new_value_pid(&motorControlWithPoten->pid, 0));
 }
 
 static inline void write_motor_drive(struct MotorDrive *motorDrive, double forward, double right) {
