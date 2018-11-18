@@ -40,7 +40,8 @@ void operatorControl() {
         //       joystick.rd2.valueY);
         write_motor_drive(&motorDrive, joystick.ry.value, joystick.rx.value);
         write_motor_rack(&motorRack, joystick.rd2.valueY);
-        write_motor_arm(&motorArm, joystick.ld2.valueY);
+        set_motor_control_with_poten(&motorControlArm, joystick.ld2.valueY);
+        refresh_motor_control_with_poten(&motorControlArm);
         set_pneumatics(&pneuGrip, joystick.ld4.valueX);
         set_pneumatics(&pneuLift, joystick.ld4.valueY);
         write_pneumatics(&pneuGrip);
