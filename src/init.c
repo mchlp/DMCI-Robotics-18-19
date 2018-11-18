@@ -20,6 +20,7 @@
 void initializeIO() {
     pinMode(pneuGrip.pin, OUTPUT);
     pinMode(pneuLift.pin, OUTPUT);
+    pinMode(motorControlArm.pidPoten.poten.port, INPUT_ANALOG);
 }
 
 /*
@@ -51,11 +52,9 @@ struct MotorRack motorRack = {
     {7, 0, -1, 1, 1}};
 struct MotorControlArm motorControlArm = {
     {{0, 0},
-     {8, 0, -1, 1, 1},
-     {1, 0, 2000, 0, 0, 0, 0, 0, 0}},
-    {{0, 0},
-     {9, 0, -1, 1, -1},
-     {1, 0, 2000, 0, 0, 0, 0, 0, 0}}};
+     {1, 0, 2000, 0, 0, 0, 0, 0, 0, 0}},
+    {8, 0, -1, 1, 1},
+    {9, 0, -1, 1, 1}};
 struct Joystick joystick = {
     1,
     {4, 0},

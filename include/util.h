@@ -24,6 +24,7 @@ struct PID {
     double errSum;
     double errLast;
     double setPoint;
+    double output;
 };
 
 struct Poten {
@@ -31,9 +32,8 @@ struct Poten {
     int value;
 };
 
-struct MotorControlWithPoten {
+struct PIDWithPoten {
     struct Poten poten;
-    struct Motor motor;
     struct PID pid;
 };
 
@@ -55,8 +55,9 @@ struct MotorRack {
 };
 
 struct MotorControlArm {
-    struct MotorControlWithPoten mcl;
-    struct MotorControlWithPoten mcr;
+    struct PIDWithPoten pidPoten;
+    struct Motor ml;
+    struct Motor mr;
 };
 
 struct JoystickInputAnalog {
@@ -87,17 +88,17 @@ static inline double clamp(double val, double min, double max) {
 }
 
 static inline void set_pid(struct PID *pid, double value) {
-    pid->setPoint = value*pid->mul;
+    pid->setPoint = value * pid->mul;
 }
 
-static inline double get_new_value_pid(struct PID *pid, double feedback) {
+static inline void get_new_value_pid(struct PID *pid, double feedback) {
     double error = pid->setPoint - feedback;
     pid->errSum += error;
     double errDelta = error - pid->errLast;
     pid->errLast = error;
     double correction = (error * pid->pGain + pid->errSum * pid->iGain + errDelta * pid->dGain);
     printf("%f\n", correction);
-    return correction;
+    pid->output = correction;
 }
 
 static inline void getPotenValue(struct Poten *poten) {
@@ -112,15 +113,15 @@ static inline void write_motor(struct Motor *motor, double value) {
     motorSet(motor->channel, clamp(output * MAX_ABS_MOTOR, -MAX_ABS_MOTOR, MAX_ABS_MOTOR));
 }
 
-static inline void set_motor_control_with_poten(struct MotorControlWithPoten *motorControlWithPoten, double change) {
-    set_pid(&motorControlWithPoten->pid, clamp(motorControlWithPoten->pid.setPoint + change, motorControlWithPoten->pid.setMin,
-                                               motorControlWithPoten->pid.setMax));
+static inline void set_pid_with_poten(struct PIDWithPoten *pidWithPoten, double change) {
+    set_pid(&pidWithPoten->pid, clamp(pidWithPoten->pid.setPoint + change, pidWithPoten->pid.setMin,
+                                      pidWithPoten->pid.setMax));
 }
 
-static inline void refresh_motor_control_with_poten(struct MotorControlWithPoten *motorControlWithPoten) {
-    getPotenValue(&motorControlWithPoten->poten);
-    double feedback = motorControlWithPoten->poten.value;
-    write_motor(&motorControlWithPoten->motor, get_new_value_pid(&motorControlWithPoten->pid, feedback));
+static inline void refresh_pid_with_poten(struct PIDWithPoten *pidWithPoten) {
+    getPotenValue(&pidWithPoten->poten);
+    double feedback = pidWithPoten->poten.value;
+    get_new_value_pid(&pidWithPoten->pid, feedback);
 }
 
 static inline void write_motor_drive(struct MotorDrive *motorDrive, double forward, double right) {
@@ -128,6 +129,13 @@ static inline void write_motor_drive(struct MotorDrive *motorDrive, double forwa
     write_motor(&motorDrive->mfr, forward - right);
     write_motor(&motorDrive->mbl, forward + right);
     write_motor(&motorDrive->mbr, forward - right);
+}
+
+static inline void refresh_motor_control_arm(struct MotorControlArm *motorControlArm, double change) {
+    set_pid_with_poten(&motorControlArm->pidPoten, change);
+    refresh_pid_with_poten(&motorControlArm->pidPoten);
+    write_motor(&motorControlArm->ml, motorControlArm->pidPoten.pid.output);
+    write_motor(&motorControlArm->mr, motorControlArm->pidPoten.pid.output);
 }
 
 static inline void write_motor_rack(struct MotorRack *motorRack, double value) {
