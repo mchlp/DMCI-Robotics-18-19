@@ -29,6 +29,7 @@
 
 void operatorControl() {
     unsigned long prevWakeupTime = millis();
+    init_motor_control_arm(&motorControlArm);
 
     while (1) {
         get_joystick_all(&joystick);

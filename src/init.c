@@ -51,8 +51,8 @@ struct MotorRack motorRack = {
     {6, 0, -1, 1, 1},
     {7, 0, -1, 1, 1}};
 struct MotorControlArm motorControlArm = {
-    {{0, 0},
-     {1, 0, 2000, 0, 0, 0, 0, 0, 0, 0}},
+    {{1, 0},
+     {1, 0, 3500, 1, 0, 0, 0, 0, 0, 0}},
     {8, 0, -1, 1, 1},
     {9, 0, -1, 1, 1}};
 struct Joystick joystick = {

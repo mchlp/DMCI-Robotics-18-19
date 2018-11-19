@@ -29,7 +29,7 @@ struct PID {
 
 struct Poten {
     unsigned char port;
-    int value;
+    double value;
 };
 
 struct PIDWithPoten {
@@ -97,12 +97,11 @@ static inline void get_new_value_pid(struct PID *pid, double feedback) {
     double errDelta = error - pid->errLast;
     pid->errLast = error;
     double correction = (error * pid->pGain + pid->errSum * pid->iGain + errDelta * pid->dGain);
-    printf("%f\n", correction);
     pid->output = correction;
 }
 
 static inline void getPotenValue(struct Poten *poten) {
-    poten->value = analogRead(poten->port);
+    poten->value = (double) analogRead(poten->port);
 }
 
 static inline void write_motor(struct Motor *motor, double value) {
@@ -132,10 +131,18 @@ static inline void write_motor_drive(struct MotorDrive *motorDrive, double forwa
 }
 
 static inline void refresh_motor_control_arm(struct MotorControlArm *motorControlArm, double change) {
+    change *= 10;
     set_pid_with_poten(&motorControlArm->pidPoten, change);
     refresh_pid_with_poten(&motorControlArm->pidPoten);
     write_motor(&motorControlArm->ml, motorControlArm->pidPoten.pid.output);
     write_motor(&motorControlArm->mr, motorControlArm->pidPoten.pid.output);
+    printf("%f %f %f\n", motorControlArm->pidPoten.pid.setPoint, motorControlArm->pidPoten.poten.value, motorControlArm->pidPoten.pid.output);
+}
+
+static inline void init_motor_control_arm(struct MotorControlArm *motorControlArm) {
+    getPotenValue(&motorControlArm->pidPoten.poten);
+    motorControlArm->pidPoten.pid.setPoint = motorControlArm->pidPoten.poten.value;
+
 }
 
 static inline void write_motor_rack(struct MotorRack *motorRack, double value) {
