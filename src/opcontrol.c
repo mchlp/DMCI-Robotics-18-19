@@ -44,12 +44,11 @@ void operatorControl() {
         //printf("%f %f %f %f %f %f %f %f %f %f\n", joystick.lx.value, joystick.ly.value, joystick.rx.value, joystick.ry.value,
         //       joystick.ld4.valueX, joystick.ld4.valueY, joystick.rd4.valueX, joystick.rd4.valueY, joystick.ld2.valueY,
         //       joystick.rd2.valueY);
-        write_motor_drive(&motorDrive, joystick.ry.value, joystick.rx.value);
+        write_motor_drive(&motorDrive, joystick.ly.value, joystick.rx.value);
         write_motor_rack(&motorRack, joystick.rd2.valueY);
         write_motor_arm(&motorArm, joystick.ld2.valueY);
-        write_motor_launcher(&motorLauncher, joystick.ry.value);
-        set_pneumatics(&pneuGrip, joystick.ld4.valueX);
-        set_pneumatics(&pneuLift, joystick.ld4.valueY);
+        set_pneumatics(&pneuGrip, -joystick.ld4.valueX);
+        set_pneumatics(&pneuLift, -joystick.ld4.valueY);
         write_pneumatics(&pneuGrip);
         write_pneumatics(&pneuLift);
         taskDelayUntil(&prevWakeupTime, 20);

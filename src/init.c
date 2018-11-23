@@ -41,7 +41,6 @@ void initialize() {
 struct MotorDrive motorDrive = {{5, 0, -1, 1, 1}, {2, 0, -1, 1, -1}, {4, 0, -1, 1, 1}, {3, 0, -1, 1, -1}};
 struct MotorRack motorRack = {{6, 0, -1, 1, 1}, {7, 0, -1, 1, 1}};
 struct MotorArm motorArm = {{8, 0, -1, 1, 1}, {9, 0, -1, 1, -1}};
-struct MotorLauncher motorLauncher = {{5, 0, -1, 1, 1}, {6, 0, -1, 1, 1}};
 struct Joystick joystick = {1, {4, 0}, {3, 0}, {1, 0}, {2, 0}, {7, 0, 0}, {8, 0, 0}, {5, 0, 0}, {6, 0, 0}};
 struct Pneumatics pneuGrip = {1, false};
 struct Pneumatics pneuLift = {2, false};
