@@ -27,14 +27,9 @@
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
 
-unsigned char channel;
-double off;
-double min;
-double max;
-double mul;
-
 void operatorControl() {
     unsigned long prevWakeupTime = millis();
+    init_motor_control_arm(&motorControlArm);
 
     while (1) {
         get_joystick_all(&joystick);
@@ -46,7 +41,7 @@ void operatorControl() {
         //       joystick.rd2.valueY);
         write_motor_drive(&motorDrive, joystick.ly.value, joystick.rx.value);
         write_motor_rack(&motorRack, joystick.rd2.valueY);
-        write_motor_arm(&motorArm, joystick.ld2.valueY);
+        refresh_motor_control_arm(&motorControlArm, joystick.ld2.valueY);
         set_pneumatics(&pneuGrip, -joystick.ld4.valueX);
         set_pneumatics(&pneuLift, -joystick.ld4.valueY);
         write_pneumatics(&pneuGrip);
