@@ -95,6 +95,13 @@ void initialize();
  */
 void operatorControl();
 
+struct MotorDrive motorDrive;
+struct MotorRack motorRack;
+struct MotorArm motorArm;
+struct Joystick joystick;
+struct Pneumatics pneuGrip;
+struct Pneumatics pneuLift;
+
 // End C++ export structure
 #ifdef __cplusplus
 }

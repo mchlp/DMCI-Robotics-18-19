@@ -34,4 +34,13 @@ void initializeIO() {
  * can be implemented in this task if desired.
  */
 void initialize() {
+    pinMode(pneuGrip.pin, OUTPUT);
+    pinMode(pneuLift.pin, OUTPUT);
 }
+
+extern struct MotorDrive motorDrive = {{5, 0, -1, 1, 1}, {2, 0, -1, 1, -1}, {4, 0, -1, 1, 1}, {3, 0, -1, 1, -1}};
+extern struct MotorRack motorRack = {{6, 0, -1, 1, 1}, {7, 0, -1, 1, 1}};
+extern struct MotorArm motorArm = {{8, 0, -1, 1, 1}, {9, 0, -1, 1, -1}};
+extern struct Joystick joystick = {1, {4, 0}, {3, 0}, {1, 0}, {2, 0}, {7, 0, 0}, {8, 0, 0}, {5, 0, 0}, {6, 0, 0}};
+extern struct Pneumatics pneuGrip = {1, false};
+extern struct Pneumatics pneuLift = {2, false};
