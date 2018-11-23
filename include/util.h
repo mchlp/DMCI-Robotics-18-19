@@ -36,6 +36,11 @@ struct MotorArm {
     struct Motor mr;
 };
 
+struct MotorLauncher {
+    struct Motor m1;
+    struct Motor m2;
+};
+
 struct JoystickInputAnalog {
     unsigned char axis;
     double value;
@@ -84,6 +89,11 @@ static inline void write_motor_rack(struct MotorRack *motorRack, double value) {
 static inline void write_motor_arm(struct MotorArm *motorArm, double value) {
     write_motor(&motorArm->ml, value);
     write_motor(&motorArm->mr, value);
+}
+
+static inline void write_motor_launcher(struct MotorLauncher *motorLauncher, double value) {
+    digitalWrite(&motorLauncher->m1.channel, value > 0 ? HIGH : LOW);
+    digitalWrite(&motorLauncher->m2.channel, value > 0 ? HIGH : LOW);
 }
 
 static inline void write_pneumatics(struct Pneumatics *pneumatics) {
