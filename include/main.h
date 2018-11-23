@@ -95,12 +95,12 @@ void initialize();
  */
 void operatorControl();
 
-struct MotorDrive motorDrive;
-struct MotorRack motorRack;
-struct MotorArm motorArm;
-struct Joystick joystick;
-struct Pneumatics pneuGrip;
-struct Pneumatics pneuLift;
+extern struct MotorDrive motorDrive;
+extern struct MotorRack motorRack;
+extern struct MotorArm motorArm;
+extern struct Joystick joystick;
+extern struct Pneumatics pneuGrip;
+extern struct Pneumatics pneuLift;
 
 // End C++ export structure
 #ifdef __cplusplus
