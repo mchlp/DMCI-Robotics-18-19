@@ -30,21 +30,16 @@
 void operatorControl() {
     unsigned long prevWakeupTime = millis();
     while (1) {
-        get_joystick_all(&joystick);
-        // printf("%f %f %f %f\n", joystick.lx.value, joystick.ly.value, joystick.rx.value, joystick.ry.value);
-        // printf("%d %d %d %d\n", joystickGetAnalog(1, 1),  joystickGetAnalog(1, 2),  joystickGetAnalog(1, 3),
-        // joystickGetAnalog(1, 4));
-        // printf("%f %f %f %f %f %f %f %f %f %f\n", joystick.lx.value, joystick.ly.value, joystick.rx.value, joystick.ry.value,
-        //       joystick.ld4.valueX, joystick.ld4.valueY, joystick.rd4.valueX, joystick.rd4.valueY, joystick.ld2.valueY,
-        //       joystick.rd2.valueY);
-        write_motor_drive(&motorDrive, joystick.ry.value, joystick.rx.value);
-        write_motor_rack(&motorRack, joystick.ld4.valueY);
-        write_motor_arm(&motorArm, joystick.ly.value);
-        set_pneumatics(&pneuGrip, -joystick.ld2.valueY);
-        set_pneumatics(&pneuLift, -joystick.rd2.valueY);
 
-        write_pneumatics(&pneuGrip);
-        write_pneumatics(&pneuLift);
+        int up = joystickGetAnalog(1, 2);
+        int right = joystickGetAnalog(1, 1);
+
+        motorSet(2, up);
+        motorSet(3, -up);
+        
+        motorSet(4, right);
+        motorSet(5, -right);
+
         taskDelayUntil(&prevWakeupTime, 20);
     }
 }

@@ -24,50 +24,5 @@
  * so, the robot will await a switch to another mode or disable/enable cycle.
  */
 void autonomous() {
-
-    unsigned long prevWakeupTime = millis();
-    write_motor_arm(&motorArm, 1);
-    taskDelayUntil(&prevWakeupTime, 200);
-    write_motor_arm(&motorArm, 0);
-
-    write_motor_drive(&motorDrive, -0.8, 0.5);
-    taskDelayUntil(&prevWakeupTime, 660);
-    write_motor_drive(&motorDrive, 0, 0);
-
-    write_motor_drive(&motorDrive, 0, 0.6);
-    taskDelayUntil(&prevWakeupTime, 300);
-    write_motor_drive(&motorDrive, 0, 0);
-
-    write_motor_drive(&motorDrive, -1, 0);
-    taskDelayUntil(&prevWakeupTime, 500);
-    write_motor_drive(&motorDrive, 0, 0);
-
-    write_motor_rack(&motorRack, -1);
-    taskDelayUntil(&prevWakeupTime, 500);
-    write_motor_rack(&motorRack, 0);
-
-    write_motor_drive(&motorDrive, 1, 0);
-    taskDelayUntil(&prevWakeupTime, 100);
-    write_motor_drive(&motorDrive, 0, 0);
-
-    write_motor_drive(&motorDrive, -1, 0);
-    taskDelayUntil(&prevWakeupTime, 2000);
-    write_motor_drive(&motorDrive, 0, 0);
-
-    write_motor_rack(&motorRack, 1);
-    taskDelayUntil(&prevWakeupTime, 1000);
-    write_motor_rack(&motorRack, 0);
-
-    write_motor_drive(&motorDrive, -1, 0);
-    taskDelayUntil(&prevWakeupTime, 1000);
-    write_motor_drive(&motorDrive, 0, 0);
-
-    write_motor_rack(&motorRack, -1);
-    taskDelayUntil(&prevWakeupTime, 500);
-    write_motor_rack(&motorRack, 0);
-
-    write_motor_drive(&motorDrive, -1, 0);
-    taskDelayUntil(&prevWakeupTime, 300);
-    write_motor_drive(&motorDrive, 0, 0);
     return;
 }

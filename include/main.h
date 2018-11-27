@@ -26,7 +26,6 @@
 #define MAIN_H_
 
 #include <API.h>
-#include <util.h>
 
 // Allow usage of this file in C++ programs
 #ifdef __cplusplus
@@ -94,13 +93,6 @@ void initialize();
  * This task should never exit; it should end with some kind of infinite loop, even if empty.
  */
 void operatorControl();
-
-extern struct MotorDrive motorDrive;
-extern struct MotorRack motorRack;
-extern struct MotorArm motorArm;
-extern struct Joystick joystick;
-extern struct Pneumatics pneuGrip;
-extern struct Pneumatics pneuLift;
 
 // End C++ export structure
 #ifdef __cplusplus
